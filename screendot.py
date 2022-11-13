@@ -77,6 +77,10 @@ class akScreenDot:
             self._canvas.delete(self._dot)
             self._canvas.delete('all')
             self._dot = None
+            self._canvas.config(bg="black", \
+                width=self._width2, height=self._height2, \
+                highlightthickness=0, bd=0)
+            self._canvas.pack()
         
         self._dot = self._canvas.create_oval(\
             self._width2/2-rad, self._height2/2-rad, \
@@ -113,16 +117,19 @@ class akScreenDot:
             self._canvas.delete(self._dot)
             self._canvas.delete('all')
             self._dot = None
+            self._canvas.config(bg="black", \
+                width=self._width2, height=self._height2, \
+                highlightthickness=0, bd=0)
+            self._canvas.pack()
             winsound.Beep(400, 500) # f, t
             return
-        # frame time is 8.0 msec (125 fps)
+        # frame time is 5.0 msec (200 fps)
         self._canvas.move(self._dot, \
-            0.008*self._dotspeed*self._xdirection, \
-            0.008*self._dotspeed*self._ydirection)
-        self._canvas.update_idletasks()
+            0.005*self._dotspeed*self._xdirection, \
+            0.005*self._dotspeed*self._ydirection)
         overhead = time.process_time() - start
-        # frame time is 8.0 msec
-        self._top.after(round(8.0 - overhead) , \
+        # frame time is 5.0 msec
+        self._top.after(round(5.0 - overhead) , \
                 self.visualStimulusMotionBind)
 
     def resetMotionFlag(self):
