@@ -26,9 +26,14 @@ class akConnections:
     def __init__(self):
         self._sock_port_receive = 8753
         self._sock_port_send = 8757
+        self._sock_port_cmdack = 8769
+
         self._sock_ip = "localhost"
+
         self._sock_receive = None
+        self._sock_cmdack = None
         self._sock_send = None
+
         self._flag_receiving = False
         self._data_buff = None
         signal.signal(signal.SIGINT, self.clear)
@@ -36,6 +41,7 @@ class akConnections:
 
     def setup(self):
         self._sock_send = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        self._sock_cmdack = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock_receive = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self._sock_receive.setsockopt(socket.SOL_SOCKET, socket.SO_RCVBUF, 1)
         self._sock_receive.bind((self._sock_ip, self._sock_port_receive))
@@ -59,7 +65,7 @@ class akConnections:
         while self._flag_receiving:
             # print("receiving")
             try:
-                self._data_buff = self._sock_receive.recv(256)
+                self._data_buff = self._sock_receive.recv(2048)
                 self.handleReceivedData()
             except:
                 pass

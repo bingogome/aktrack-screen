@@ -137,6 +137,6 @@ class akScreenDot:
 
 if __name__ == "__main__":
     # Use monitorenum.py to determine the second monitor size and locations
-    width2, height2 = 2560, 1440
+    width2, height2 = 2560, 1600
     sd = akScreenDot(width2, height2)
     sd.setup()
