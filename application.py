@@ -25,6 +25,7 @@ import signal
 import json
 
 class Application(akConnections):
+
     def __init__(self):
         super().__init__()
         width2, height2 = 1600, 1200
@@ -38,7 +39,14 @@ class Application(akConnections):
         super().setup()
         self._sd.setup()
         
-    
+    def clear(self, *args):
+        if self._sd._flag_running:
+            self._sd.resetMotionFlag()
+            self.utilSendJson({"commandtype":"trialStop", \
+                "commandcontent":"trialstop"})
+        super().clear()
+        self._sd._top.destroy()
+
     def receive(self):
         if self._flag_receiving:
             # print("receiving")
@@ -50,11 +58,20 @@ class Application(akConnections):
                 self._sd._top.after(80, self.receive)
 
     def handleReceivedData(self):
-        """
-        Will need to be overriden
-        """
         func = self.utilMsgParse()
         func()
+
+    def keyBindings(self):
+        self._sd._top.bind("q", lambda e: self.clear())
+
+    def utilSendJson(self, j):
+        comm_out = json.dumps(j)
+        self._sock_send.sendto(comm_out.encode('UTF-8'), \
+            (self._sock_ip, self._sock_port_send))
+
+    def utilSendTextCmdack(self, t):
+        self._sock_cmdack.sendto(
+            t.encode('UTF-8'), (self._sock_ip, self._sock_port_cmdack))
     
     def utilMsgParse(self):
         data = self._data_buff.decode("UTF-8")
@@ -64,67 +81,47 @@ class Application(akConnections):
         if self._jsondata["commandtype"] == "trialstopcommand":
             return self.utilTrialCommandStopCallBack
 
+    def utilCheckRunningFlag(self):
+        if self._sd._flag_running == True:
+            self._sd._top.after(100, self.utilCheckRunningFlag)
+        else:
+            self.utilSendJson({"commandtype":"trialStop", \
+                "commandcontent":"trialcomplete"})
+
     def utilTrialCommandCallBack(self):
-        msg = "ack"
-        self._sock_cmdack.sendto(
-                msg.encode('UTF-8'), (self._sock_ip, self._sock_port_cmdack))
+
+        self.utilSendTextCmdack("ack")
+        
         msg = self._jsondata["commandcontent"]
         msgarr = msg.split("-")
+
+        def helper(m):
+            if m == "R":
+                self._sd.visualStimulusMotion(dir=2)
+            if m == "L":
+                self._sd.visualStimulusMotion(dir=3)
+            if m == "U":
+                self._sd.visualStimulusMotion(dir=4)
+            if m == "D":
+                self._sd.visualStimulusMotion(dir=5)
+
         if msgarr[0] == "VPM":
             self._sd._dotspeed = float(msgarr[1]) * (1.0/180.0*pi*405.0/(1500.0/1600.0))
             # pixels / second, r is the subject-screen dist * 0.3?, n is mm/px: (xdeg/sec) * (1/180*pi*r/n)
-            if msgarr[2] == "R":
-                self._sd.visualStimulusMotion(dir=2)
-            if msgarr[2] == "L":
-                self._sd.visualStimulusMotion(dir=3)
-            if msgarr[2] == "U":
-                self._sd.visualStimulusMotion(dir=4)
-            if msgarr[2] == "D":
-                self._sd.visualStimulusMotion(dir=5)
+            helper(msgarr[2])
+            
         if msgarr[0] == "VPC":
             self._sd._dotspeed = 2.0 * (1.0/180.0*pi*405.0/(1500.0/1600.0))   
             # pixels / second, r is the subject-screen dist * 0.3?, n is mm/px: (xdeg/sec) * (1/180*pi*r/n)
-            if msgarr[1] == "R":
-                self._sd.visualStimulusMotion(dir=2)
-            if msgarr[1] == "L":
-                self._sd.visualStimulusMotion(dir=3)
-            if msgarr[1] == "U":
-                self._sd.visualStimulusMotion(dir=4)
-            if msgarr[1] == "D":
-                self._sd.visualStimulusMotion(dir=5)
-        self._top.after(100 , self.utilCheckRunningFlag)
-
-    def utilCheckRunningFlag(self):
-        if self._sd._flag_running == True:
-            self._top.after(100, self.utilCheckRunningFlag)
-        else:
-            msg = {"commandtype":"trialStop", \
-            "commandcontent":"trialcomplete"}
+            helper(msgarr[1])
+            
+        self._sd._top.after(100 , self.utilCheckRunningFlag)
 
     def utilTrialCommandStopCallBack(self):
-        msg = "ack"
-        self._sock_cmdack.sendto(
-                msg.encode('UTF-8'), (self._sock_ip, self._sock_port_cmdack))
+        self.utilSendTextCmdack("ack")
         self._sd.resetMotionFlag()
-        comm = {"commandtype":"trialStop", \
-            "commandcontent":"trialstop"}
-        comm_out = json.dumps(comm)
-        self._sock_send.sendto(
-            comm_out.encode('UTF-8'), (self._sock_ip, self._sock_port_send))
-
-    def keyBindings(self):
-        self._sd._top.bind("q", lambda e: self.clear())
-        
-    def clear(self, *args):
-        if self._sd._flag_running:
-            self._sd.resetMotionFlag()
-            comm = {"commandtype":"trialStop", \
-                "commandcontent":"trialstop"}
-            comm_out = json.dumps(comm)
-            self._sock_send.sendto(
-                comm_out.encode('UTF-8'), (self._sock_ip, self._sock_port_send))
-        super().clear()
-        self._sd._top.destroy()
+        self.utilSendJson({"commandtype":"trialStop", \
+            "commandcontent":"trialstop"})
         
 if __name__ == "__main__":
     app = Application()

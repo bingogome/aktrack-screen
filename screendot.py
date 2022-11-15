@@ -122,7 +122,14 @@ class akScreenDot:
         self.visualStimulusMotionBind()
     
     def visualStimulusMotionBind(self):
+
         start = time.process_time()
+        coor = self._canvas.coords(self._dot)
+        coorx, coory = (coor[0] + coor[2]) / 2.0, (coor[1] + coor[3]) / 2.0
+        if coorx >= self._width2/2+450 or coorx <= self._width2/2-450 \
+            or coory >= self._height2/2+450 or coory <= self._height2/2-450:
+            self._flag_running = False
+            
         if not self._flag_running:
             self._canvas.delete(self._dot)
             self._canvas.delete('all')
