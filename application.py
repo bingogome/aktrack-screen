@@ -29,7 +29,7 @@ class Application(akConnections):
         super().__init__()
         width2, height2 = 1600, 1200
         self._sd = akScreenDot(width2, height2)
-        self._connections = akConnections()
+        self._sd._connections = self
         self.keyBindings()
         signal.signal(signal.SIGINT, self.clear)
         signal.signal(signal.SIGTERM, self.clear)
@@ -37,6 +37,7 @@ class Application(akConnections):
     def setup(self):
         super().setup()
         self._sd.setup()
+        
     
     def receive(self):
         if self._flag_receiving:
@@ -115,9 +116,16 @@ class Application(akConnections):
         self._sd._top.bind("q", lambda e: self.clear())
         
     def clear(self, *args):
+        if self._sd._flag_running:
+            self._sd.resetMotionFlag()
+            comm = {"commandtype":"trialStop", \
+                "commandcontent":"trialstop"}
+            comm_out = json.dumps(comm)
+            self._sock_send.sendto(
+                comm_out.encode('UTF-8'), (self._sock_ip, self._sock_port_send))
         super().clear()
         self._sd._top.destroy()
-
+        
 if __name__ == "__main__":
     app = Application()
     app.setup()

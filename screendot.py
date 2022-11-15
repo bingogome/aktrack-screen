@@ -21,6 +21,7 @@ SOFTWARE.
 import tkinter
 import time
 import winsound
+import json
 
 class akScreenDot:
     
@@ -33,6 +34,7 @@ class akScreenDot:
         self.keyBindings()
         self.subjectSetup()
         self.trialSettings()
+        self._connections = None
 
     def monitorInfo(self, width2, height2):
         self._width1= self._top.winfo_screenwidth()
@@ -57,7 +59,7 @@ class akScreenDot:
         self._top.bind("<KeyPress-Up>",  lambda e: self.visualStimulusMotion(4))
         self._top.bind("<KeyPress-Down>",  lambda e: self.visualStimulusMotion(5))
         self._top.bind("<Escape>",  lambda e: self.resetMotionFlag())
-        self._top.bind("q", lambda e: self._top.destroy())
+        self._top.bind("q", lambda e: self.cleanUp())
     
     def subjectSetup(self):
         self._dotspeed = 200.0 # pixels/sec
@@ -71,6 +73,9 @@ class akScreenDot:
 
     def clear(self, *args):
         self._top.destroy()
+    
+    def cleanUp(self):
+        self._top.clear()
 
     def fullScreen(self, e=None):
         self._top.attributes("-topmost", 1)
