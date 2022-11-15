@@ -27,7 +27,7 @@ import json
 class Application(akConnections):
     def __init__(self):
         super().__init__()
-        width2, height2 = 2560, 1600
+        width2, height2 = 1600, 1200
         self._sd = akScreenDot(width2, height2)
         self._connections = akConnections()
         self.keyBindings()

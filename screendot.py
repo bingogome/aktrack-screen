@@ -38,8 +38,8 @@ class akScreenDot:
         self._height1= self._top.winfo_screenheight()
         self._width2 = width2
         self._height2 = height2
-        self._top.geometry(f"{self._width1}x{self._height1}")
-        self._top.geometry(f"+0-{self._height2}") # use this to change the window location
+        self._top.geometry(f"{self._width2}x{self._height2}")
+        # self._top.geometry(f"+0-{self._height2}") # use this to change the window location
     
     def canvasSettings(self):
         self._canvas = tkinter.Canvas(self._top, bg="black", \
@@ -58,7 +58,7 @@ class akScreenDot:
         self._top.bind("q", lambda e: self._top.destroy())
     
     def subjectSetup(self):
-        self._dotspeed = 200.0 # pixels/sec
+        self._dotspeed = 500.0 # pixels/sec
         
     def setup(self):
         self._canvas.pack()
