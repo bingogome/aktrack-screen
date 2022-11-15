@@ -45,6 +45,7 @@ class akScreenDot:
         self._canvas = tkinter.Canvas(self._top, bg="black", \
             width=self._width2, height=self._height2, \
             highlightthickness=0, bd=0)
+        self._fps = 60.0
 
     def keyBindings(self):
         self._top.bind("a",  lambda e: self.fullScreen())
@@ -58,7 +59,7 @@ class akScreenDot:
         self._top.bind("q", lambda e: self._top.destroy())
     
     def subjectSetup(self):
-        self._dotspeed = 500.0 # pixels/sec
+        self._dotspeed = 200.0 # pixels/sec
         
     def setup(self):
         self._canvas.pack()
@@ -123,13 +124,13 @@ class akScreenDot:
             self._canvas.pack()
             winsound.Beep(400, 500) # f, t
             return
-        # frame time is 5.0 msec (200 fps)
+        
         self._canvas.move(self._dot, \
-            0.005*self._dotspeed*self._xdirection, \
-            0.005*self._dotspeed*self._ydirection)
+            (1.0/self._fps) *self._dotspeed*self._xdirection, \
+            (1.0/self._fps) *self._dotspeed*self._ydirection)
         overhead = time.process_time() - start
-        # frame time is 5.0 msec
-        self._top.after(round(5.0 - overhead) , \
+        
+        self._top.after(round((1.0/self._fps) - overhead) , \
                 self.visualStimulusMotionBind)
 
     def resetMotionFlag(self):
