@@ -32,6 +32,7 @@ class akScreenDot:
         self.canvasSettings()
         self.keyBindings()
         self.subjectSetup()
+        self.trialSettings()
 
     def monitorInfo(self, width2, height2):
         self._width1= self._top.winfo_screenwidth()
@@ -60,6 +61,9 @@ class akScreenDot:
     
     def subjectSetup(self):
         self._dotspeed = 200.0 # pixels/sec
+    
+    def trialSettings(self):
+        self._flag_running = False
         
     def setup(self):
         self._canvas.pack()
@@ -88,7 +92,7 @@ class akScreenDot:
             self._width2/2+rad, self._height2/2+rad, \
             fill = "white",
             width = 0)
-        self._flagMotion = False
+        self._flag_running = False
 
     def visualStimulus(self, e=None):
         if not self._dot:
@@ -96,7 +100,7 @@ class akScreenDot:
         self._canvas.itemconfig(self._dot, fill = "red")
 
     def visualStimulusMotion(self, dir=5, e=None):
-        self._flagMotion = False
+        self._flag_running = False
         self.visualStimulus()
         if dir == 1:
             self._xdirection, self._ydirection = 0, 0
@@ -108,13 +112,13 @@ class akScreenDot:
             self._xdirection, self._ydirection = 0, -1
         if dir == 5:
             self._xdirection, self._ydirection = 0, 1
-        self._flagMotion = True
+        self._flag_running = True
         winsound.Beep(400, 500) # f, t
         self.visualStimulusMotionBind()
     
     def visualStimulusMotionBind(self):
         start = time.process_time()
-        if not self._flagMotion:
+        if not self._flag_running:
             self._canvas.delete(self._dot)
             self._canvas.delete('all')
             self._dot = None
@@ -134,7 +138,7 @@ class akScreenDot:
                 self.visualStimulusMotionBind)
 
     def resetMotionFlag(self):
-        self._flagMotion = False
+        self._flag_running = False
 
 if __name__ == "__main__":
     # Use monitorenum.py to determine the second monitor size and locations

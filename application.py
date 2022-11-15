@@ -91,6 +91,14 @@ class Application(akConnections):
                 self._sd.visualStimulusMotion(dir=4)
             if msgarr[1] == "D":
                 self._sd.visualStimulusMotion(dir=5)
+        self._top.after(100 , self.utilCheckRunningFlag)
+
+    def utilCheckRunningFlag(self):
+        if self._sd._flag_running == True:
+            self._top.after(100, self.utilCheckRunningFlag)
+        else:
+            msg = {"commandtype":"trialStop", \
+            "commandcontent":"trialcomplete"}
 
     def utilTrialCommandStopCallBack(self):
         msg = "ack"
