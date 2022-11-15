@@ -44,9 +44,9 @@ class Application(akConnections):
             try:
                 self._data_buff = self._sock_receive.recv(2048)
                 self.handleReceivedData()
-                self._sd._top.after(50, self.receive)
+                self._sd._top.after(80, self.receive)
             except:
-                self._sd._top.after(50, self.receive)
+                self._sd._top.after(80, self.receive)
 
     def handleReceivedData(self):
         """

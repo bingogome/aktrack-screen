@@ -40,12 +40,12 @@ class akScreenDot:
         self._height2 = height2
         self._top.geometry(f"{self._width2}x{self._height2}")
         # self._top.geometry(f"+0-{self._height2}") # use this to change the window location
-    
+        self._fps = 120.0
+
     def canvasSettings(self):
         self._canvas = tkinter.Canvas(self._top, bg="black", \
             width=self._width2, height=self._height2, \
             highlightthickness=0, bd=0)
-        self._fps = 60.0
 
     def keyBindings(self):
         self._top.bind("a",  lambda e: self.fullScreen())
@@ -128,9 +128,9 @@ class akScreenDot:
         self._canvas.move(self._dot, \
             (1.0/self._fps) *self._dotspeed*self._xdirection, \
             (1.0/self._fps) *self._dotspeed*self._ydirection)
-        overhead = time.process_time() - start
+        overhead = (time.process_time() - start) / 1000.0
         
-        self._top.after(round((1.0/self._fps) - overhead) , \
+        self._top.after(round((1000.0/self._fps) - overhead) , \
                 self.visualStimulusMotionBind)
 
     def resetMotionFlag(self):
