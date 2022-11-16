@@ -66,6 +66,7 @@ class akScreenDot:
     
     def trialSettings(self):
         self._flag_running = False
+        self._flag_complete = False
         
     def setup(self):
         self._canvas.pack()
@@ -128,7 +129,7 @@ class akScreenDot:
         coorx, coory = (coor[0] + coor[2]) / 2.0, (coor[1] + coor[3]) / 2.0
         if coorx >= self._width2/2+450 or coorx <= self._width2/2-450 \
             or coory >= self._height2/2+450 or coory <= self._height2/2-450:
-            self._flag_running = False
+            self.trialComplete()
             
         if not self._flag_running:
             self._canvas.delete(self._dot)
@@ -147,7 +148,11 @@ class akScreenDot:
         overhead = (time.process_time() - start) / 1000.0
         
         self._top.after(round((1000.0/self._fps) - overhead) , \
-                self.visualStimulusMotionBind)
+            self.visualStimulusMotionBind)
+
+    def trialComplete(self):
+        self._flag_running = False
+        self._flag_complete = True
 
     def resetMotionFlag(self):
         self._flag_running = False

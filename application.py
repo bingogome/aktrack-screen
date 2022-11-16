@@ -85,8 +85,10 @@ class Application(akConnections):
         if self._sd._flag_running == True:
             self._sd._top.after(100, self.utilCheckRunningFlag)
         else:
-            self.utilSendJson({"commandtype":"trialStop", \
-                "commandcontent":"trialcomplete"})
+            if self._sd._flag_complete:
+                self.utilSendJson({"commandtype":"trialStop", \
+                    "commandcontent":"trialcomplete"})
+                self._sd._flag_complete = False
 
     def utilTrialCommandCallBack(self):
 
@@ -114,8 +116,13 @@ class Application(akConnections):
             self._sd._dotspeed = 2.0 * (1.0/180.0*pi*405.0/(1500.0/1600.0))   
             # pixels / second, r is the subject-screen dist * 0.3?, n is mm/px: (xdeg/sec) * (1/180*pi*r/n)
             helper(msgarr[1])
+
+        if msgarr[0] == "VPB":
+            self._sd.visualStimulusMotion(dir=1)
+            self._sd._top.after(1000*5*60, self._sd.trialComplete)
             
         self._sd._top.after(100 , self.utilCheckRunningFlag)
+        print("Trial started")
 
     def utilTrialCommandStopCallBack(self):
         self.utilSendTextCmdack("ack")
