@@ -18,6 +18,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
+import datetime
 import tkinter
 import time
 import winsound
@@ -92,7 +93,7 @@ class akScreenDot:
                 width=self._width2, height=self._height2, \
                 highlightthickness=0, bd=0)
             self._canvas.pack()
-        
+        self._dot_init_pos = [float(self._width2/2), float(self._height2/2)]
         self._dot = self._canvas.create_oval(\
             self._width2/2-rad, self._height2/2-rad, \
             self._width2/2+rad, self._height2/2+rad, \
@@ -120,11 +121,11 @@ class akScreenDot:
             self._xdirection, self._ydirection = 0, 1
         self._flag_running = True
         winsound.Beep(400, 500) # f, t
+        self._start_time = datetime.datetime.now()
         self.visualStimulusMotionBind()
     
     def visualStimulusMotionBind(self):
 
-        start = time.process_time()
         coor = self._canvas.coords(self._dot)
         coorx, coory = (coor[0] + coor[2]) / 2.0, (coor[1] + coor[3]) / 2.0
         if coorx >= self._width2/2+450 or coorx <= self._width2/2-450 \
@@ -142,12 +143,16 @@ class akScreenDot:
             winsound.Beep(400, 500) # f, t
             return
         
-        self._canvas.move(self._dot, \
-            (1.0/self._fps) *self._dotspeed*self._xdirection, \
-            (1.0/self._fps) *self._dotspeed*self._ydirection)
-        overhead = (time.process_time() - start) / 1000.0
+        time_elapsed = (datetime.datetime.now() - \
+            self._start_time).total_seconds()
+
+        coorx_delta = time_elapsed*self._dotspeed*self._xdirection \
+            - (coorx - self._dot_init_pos[0])
+        coory_delta = time_elapsed*self._dotspeed*self._ydirection \
+            - (coory - self._dot_init_pos[1])
+        self._canvas.move(self._dot, coorx_delta, coory_delta)
         
-        self._top.after(round((1000.0/self._fps) - overhead) , \
+        self._top.after(round((1000.0/self._fps)) , \
             self.visualStimulusMotionBind)
 
     def trialComplete(self):

@@ -108,12 +108,14 @@ class Application(akConnections):
                 self._sd.visualStimulusMotion(dir=5)
 
         if msgarr[0] == "VPM":
-            self._sd._dotspeed = float(msgarr[1]) * (1.0/180.0*pi*405.0/(1500.0/1600.0))
+            # self._sd._dotspeed = float(msgarr[1]) * (pi/180.0*1350.0/405.0*1600.0) 
+            self._sd._dotspeed = float(msgarr[1]) * (pi/180.0*405.0/(1500.0/1600.0))
             # pixels / second, r is the subject-screen dist * 0.3?, n is mm/px: (xdeg/sec) * (1/180*pi*r/n)
             helper(msgarr[2])
             
         if msgarr[0] == "VPC":
-            self._sd._dotspeed = 2.0 * (1.0/180.0*pi*405.0/(1500.0/1600.0))   
+            # self._sd._dotspeed = 2.0 * (pi/180.0*1350.0/405.0*1600.0) 
+            self._sd._dotspeed = 2.0 * (pi/180.0*405.0/(1500.0/1600.0))   
             # pixels / second, r is the subject-screen dist * 0.3?, n is mm/px: (xdeg/sec) * (1/180*pi*r/n)
             helper(msgarr[1])
 
