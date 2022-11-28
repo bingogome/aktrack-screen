@@ -63,7 +63,7 @@ class akScreenDot:
         self._top.bind("q", lambda e: self.cleanUp())
     
     def subjectSetup(self):
-        self._dotspeed = 200.0 # pixels/sec
+        self._dotspeed = 500.0 # pixels/sec
     
     def trialSettings(self):
         self._flag_running = False
@@ -84,7 +84,10 @@ class akScreenDot:
         self._top.attributes("-fullscreen", True)
 
     def visualStimulusInit(self, e=None):
-        rad = 10
+        # get a large width to deal with the cutoff of the dot
+        # For future developer: try the width = 0 and move it at a hi speed
+        outlinewidth = 16
+        rad = 10 + outlinewidth/2
         if self._dot:
             self._canvas.delete(self._dot)
             self._canvas.delete('all')
@@ -98,7 +101,8 @@ class akScreenDot:
             self._width2/2-rad, self._height2/2-rad, \
             self._width2/2+rad, self._height2/2+rad, \
             fill = "white",
-            width = 0)
+            outline = "black", 
+            width=outlinewidth)
         self._flag_running = False
 
     def visualStimulus(self, e=None):
