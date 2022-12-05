@@ -18,7 +18,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 
-import datetime
+import datetime, random
 import tkinter
 import time
 import winsound
@@ -123,10 +123,17 @@ class akScreenDot:
             self._xdirection, self._ydirection = 0, -1
         if dir == 5:
             self._xdirection, self._ydirection = 0, 1
+        fixationTime = round(1000.0 + 500.0 * random.random())
+        print("Fixation: " + str(fixationTime) + " msec")
         self._flag_running = True
-        winsound.Beep(400, 500) # f, t
-        self._start_time = datetime.datetime.now()
-        self.visualStimulusMotionBind()
+        self._top.after(fixationTime, \
+            self.visualStimulusMotionPostFixation)
+    
+    def visualStimulusMotionPostFixation(self):
+        if self._flag_running:
+            winsound.Beep(400, 500) # f, t
+            self._start_time = datetime.datetime.now()
+            self.visualStimulusMotionBind()
     
     def visualStimulusMotionBind(self):
 
