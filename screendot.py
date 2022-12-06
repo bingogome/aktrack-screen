@@ -132,9 +132,14 @@ class akScreenDot:
     def visualStimulusMotionPostFixation(self):
         if self._flag_running:
             winsound.Beep(400, 500) # f, t
+            self._top.after(500, \
+                self.visualStimulusMotionPostBeep)
+            
+    def visualStimulusMotionPostBeep(self):
+        if self._flag_running:
             self._start_time = datetime.datetime.now()
             self.visualStimulusMotionBind()
-    
+
     def visualStimulusMotionBind(self):
 
         coor = self._canvas.coords(self._dot)
