@@ -123,15 +123,19 @@ class akScreenDot:
             self._xdirection, self._ydirection = 0, -1
         if dir == 5:
             self._xdirection, self._ydirection = 0, 1
-        fixationTime = round(1000.0 + 500.0 * random.random())
-        print("Fixation: " + str(fixationTime) + " msec")
+        self._fixationTime = round(1000.0 + 500.0 * random.random())
+        print("Fixation: " + str(self._fixationTime) + " msec")
+        self.visualStimulusMotionPostInit()
+    
+    def visualStimulusMotionPostInit(self):
         self._flag_running = True
-        self._top.after(fixationTime, \
+        winsound.Beep(400, 500) # f, t
+        self._top.after(self._fixationTime, \
             self.visualStimulusMotionPostFixation)
     
     def visualStimulusMotionPostFixation(self):
         if self._flag_running:
-            winsound.Beep(400, 500) # f, t
+            # winsound.Beep(400, 500) # f, t
             self._top.after(500, \
                 self.visualStimulusMotionPostBeep)
             
