@@ -77,7 +77,7 @@ class akScreenDot:
         self._top.destroy()
     
     def cleanUp(self):
-        self._top.clear()
+        self.clear()
 
     def fullScreen(self, e=None):
         self._top.attributes("-topmost", 1)
