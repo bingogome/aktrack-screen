@@ -48,6 +48,7 @@ class akScreenDot:
         self._fps = 120.0
 
     def canvasSettings(self):
+        self._flag_fullscreen = False
         self._canvas = tkinter.Canvas(self._top, bg="black", \
             width=self._width2, height=self._height2, \
             highlightthickness=0, bd=0)
@@ -81,8 +82,13 @@ class akScreenDot:
         self.clear()
 
     def fullScreen(self, e=None):
-        self._top.attributes("-topmost", 1)
-        self._top.attributes("-fullscreen", True)
+        if not self._flag_fullscreen:
+            self._top.attributes("-topmost", 1)
+            self._top.attributes("-fullscreen", True)
+        else:
+            self._top.attributes("-topmost", 0)
+            self._top.attributes("-fullscreen", False)
+        self._flag_fullscreen = self._flag_fullscreen != True
 
     def visualStimulusInit(self, e=None):
         # get a large width to deal with the cutoff of the dot
