@@ -38,6 +38,7 @@ class Application(akConnections):
     def setup(self):
         super().setup()
         self._sd.setup()
+        self._completeSchedule = None
         
     def clear(self, *args):
         if self._sd._flag_running:
@@ -121,7 +122,7 @@ class Application(akConnections):
 
         if msgarr[0] == "VPB":
             self._sd.visualStimulusMotion(dir=1)
-            self._sd._top.after(1000*5*60, self._sd.trialComplete)
+            self._completeSchedule = self._sd._top.after(1000*5*60, self._sd.trialComplete)
             
         self._sd._top.after(100 , self.utilCheckRunningFlag)
         print("Trial started")
@@ -129,6 +130,8 @@ class Application(akConnections):
     def utilTrialCommandStopCallBack(self):
         self.utilSendTextCmdack("ack")
         self._sd.resetMotionFlag()
+        if self._completeSchedule:
+            self._sd._top.after_cancel(self._completeSchedule)
         self.utilSendJson({"commandtype":"trialStop", \
             "commandcontent":"trialstop"})
         
